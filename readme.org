@@ -1,5 +1,6 @@
 * OpenBSD + FVWM3 config
 
+
 Исходим из того, что Xserver был установлен при инсталяции системы.
 
 Устанавливаем fvwm3:
@@ -8,7 +9,8 @@
   pkg_add fvwm3
 #+end_src
 
-В ~ создаём файл .xsession
+Для запуска черех xenologin в домашнем каталоге ~ создаём файл .xsession.
+Раньше настраивал запуск через .xinit, но в крайний раз почему-то не сработало. Через xsession всё норм.
 
 #+begin_src sh
   userresources=$HOME/.Xresources
@@ -21,18 +23,6 @@
       xmodmap "$usermodmap"
   fi
 
-
-  if [ -z "$SSH_AGENT_PID" ] && [ -x /usr/bin/ssh-agent ]
-  then
-      for k in id_rsa id_ecdsa id_ecdsa_sk id_ed25519 id_ed25519_sk id_dsa
-      do
-        	if [ -f "$HOME/.ssh/$k" ]; then
-        	    eval `ssh-agent -s`
-        	    ssh-add < /dev/null
-        	    break
-        	fi
-      done
-  fi
   exec fvwm3
 #+end_src
 
