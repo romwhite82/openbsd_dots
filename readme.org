@@ -1,0 +1,37 @@
+* OpenBSD + FVWM3 config
+
+Исходим из того, что Xserver был установлен при инсталяции системы.
+
+Устанавливаем fvwm3:
+
+#+begin_src sh
+  pkg_add fvwm3
+#+end_src
+
+В ~ создаём файл .xsession
+
+#+begin_src sh
+   userresources=$HOME/.Xresources
+ usermodmap=$HOME/.Xmodmap
+  
+    if [ -f "$userresources" ]; then
+          xrdb -merge "$userresources"
+      fi
+      if [ -f "$usermodmap" ]; then
+          xmodmap "$usermodmap"
+      fi
+
+
+      if [ -z "$SSH_AGENT_PID" ] && [ -x /usr/bin/ssh-agent ]
+      then
+      	for k in id_rsa id_ecdsa id_ecdsa_sk id_ed25519 id_ed25519_sk id_dsa
+      	do
+      		if [ -f "$HOME/.ssh/$k" ]; then
+      			eval `ssh-agent -s`
+      			ssh-add < /dev/null
+      			break
+      		fi
+      	done
+      fi
+exec fvwm3
+#+end_src
