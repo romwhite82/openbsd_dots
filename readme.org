@@ -3,6 +3,44 @@
 [[https://raw.githubusercontent.com/romwhite82/openbsd_dots/main/screenshot/fvwm3_screen.jpg]]
 
 ** Базовая конфигурация
+*** Добавляем пользователя в группы:
+Из usermod man page:
+"-G secondary-group[,group,...]
+    Appends the user to the given groups in the /etc/group file. -G and -S are mutually exclusive".
+Таким образом:
+#+begin_src sh
+  usermod -G wheel,staff,operator <username>
+#+end_src
+*** Изменяем квоты для группы staff
+В /etc/login.conf
+#+begin_src sh
+  staff:\
+        :datasize-cur=infinity:\
+        :datasize-max=infinity:\
+        :maxproc-cur=512:\
+        :maxproc-max=1024:\
+        :openfiles-cur=102400:\
+        :openfiles-max=102400:\
+        :stacksize-cur=32M:\
+        :ignorenologin:\
+        :requirehome@:\
+        :tc=default:
+#+end_src
+*** Включаем отключенный по дефолту HyperThreading
+В /etc/sysctl.conf добавляем:
+#+begin_src sh
+staff:\
+        :datasize-cur=infinity:\
+        :datasize-max=infinity:\
+        :maxproc-cur=512:\
+        :maxproc-max=1024:\
+        :openfiles-cur=102400:\
+        :openfiles-max=102400:\
+        :stacksize-cur=32M:\
+        :ignorenologin:\
+        :requirehome@:\
+        :tc=default:
+#+end_src
 ** Настройка FVWM3
 
 Исходим из того, что Xserver был установлен при инсталяции системы.
