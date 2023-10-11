@@ -2,6 +2,9 @@
 
 [[https://raw.githubusercontent.com/romwhite82/openbsd_dots/main/screenshot/fvwm3_screen.jpg]]
 
+** Базовая конфигурация
+** Настройка FVWM3
+
 Исходим из того, что Xserver был установлен при инсталяции системы.
 
 Устанавливаем fvwm3:
@@ -10,8 +13,7 @@
   pkg_add fvwm3
 #+end_src
 
-Для запуска черех xenologin в домашнем каталоге ~ создаём файл .xsession.
-Раньше настраивал запуск через .xinit, но в крайний раз почему-то не сработало. Через xsession всё норм.
+Для запуска через xenodm в домашнем каталоге ~ создаём файл .xsession
 
 #+begin_src sh
   userresources=$HOME/.Xresources
@@ -27,4 +29,19 @@
   exec fvwm3
 #+end_src
 
-В качестве эмулятора терминала решил неожиданно для себя использовать xTerm. Цвета настроил соответственно схеме Nord. Все настройки xTerm-a делаются через .Xresources
+В качестве эмулятора терминала дефолтный Xterm. Цвета - соответственно схеме Nord. Все настройки xTerm-a делаются через ~/.Xresources
+
+Путь для конфига fvwm: ~/.fvwm/config
+
+Автозапуск приложений при первой загрузке:
+
+#+begin_src
+DestroyFunc StartFunction
+AddToFunc   StartFunction
++ I Test (Init) InitBackground
+  Exec exec picom -b
+  Exec exec ~/.fehbg
++ I Module FvwmButtons RightPanel
++ I Module FvwmEvent EventNewDesk
+#+end_src
+
