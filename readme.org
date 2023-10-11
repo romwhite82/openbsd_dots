@@ -45,7 +45,10 @@ AddToFunc   StartFunction
 + I Module FvwmEvent EventNewDesk
 #+end_src
 
-Клавиатурные сочетания с использованием левой Winkey:
+
+Клавиатурные сочетания:
+Модификаторы - Modifiers: (A)ny, (C)ontrol, (S)hift, (M)eta, (N)othing
+Левая Winkey - 4. Пример с использованием winkey
 
 #+begin_src
 Silent Key 1      A 4 GotoPage 0 0
