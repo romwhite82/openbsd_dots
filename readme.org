@@ -11,6 +11,12 @@
 #+begin_src sh
   usermod -G wheel,staff,operator <username>
 #+end_src
+*** Разрешаем повышение привилегий группе wheel
+В /etc/doas.conf
+#+begin_src sh
+  permit nopass keepenv :wheel
+#+end_src
+
 *** Изменяем квоты для группы staff
 В /etc/login.conf
 #+begin_src sh
@@ -48,6 +54,11 @@ kern.video.record=1
 net.inet.udp.recvspace=262144
 net.inet.udp.sendspace=262144
 net.inet.icmp.errppslimit=1000
+#+end_src
+*** Дополнительные опции в fstab
+Открываем через Vim /etc/fstab и меняем опции:
+#+begin_src
+:%s/rw,/rw,softdep,noatime,/g
 #+end_src
 ** Настройка FVWM3
 
