@@ -1,6 +1,6 @@
 * OpenBSD + FVWM3 config
 
-[https://raw.githubusercontent.com/romwhite82/openbsd_dots/main/screenshot/fvwm3_screen.jpg]
+https://raw.githubusercontent.com/romwhite82/openbsd_dots/main/screenshot/fvwm3_screen.jpg
 
 Исходим из того, что Xserver был установлен при инсталяции системы.
 
