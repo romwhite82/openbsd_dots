@@ -60,6 +60,33 @@ net.inet.icmp.errppslimit=1000
 #+begin_src
 :%s/rw,/rw,softdep,noatime,/g
 #+end_src
+*** Устанавливаем софт
+doas pkg_add
+#+begin_src
+firefox
+arc-icon-theme
+arc-theme-solid
+bash
+dmenu
+emacs
+feh
+gimp
+htop
+neofetch
+hunspell
+libreoffice
+libreoffice-i18n-ru
+lxappearance
+mozilla-dicts-ru
+mpv
+picom
+scrot
+stalonetray
+tdesktop
+ubuntu-fonts
+zathura
+zathura-pdf-mupdf
+#+end_src
 ** Настройка FVWM3
 
 Исходим из того, что Xserver был установлен при инсталяции системы.
