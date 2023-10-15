@@ -13,4 +13,4 @@ cabal-version: >=1.8
 
 executable xmonad-config
   main-is: config.hs
-  build-depends: base, xmonad, xmonad-contrib, containers, directory
+  build-depends: base, xmonad, xmonad-contrib, containers, directory 

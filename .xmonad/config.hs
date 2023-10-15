@@ -32,7 +32,7 @@ import qualified Data.Map as M
     -- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
 import XMonad.Hooks.EwmhDesktops  -- for some fullscreen events, also for xcomposite in obs.
-import XMonad.Hooks.ManageDocks (avoidStruts, docksEventHook, manageDocks, ToggleStruts(..))
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat)
 import XMonad.Hooks.ServerMode
 import XMonad.Hooks.SetWMName
@@ -80,6 +80,9 @@ myModMask = mod4Mask        -- Sets modkey to super/windows key
 
 myTerminal :: String
 myTerminal = "kitty" -- Sets default terminal
+
+myRofi :: String
+myRofi = "rofi -show drun -theme ~/.config/awesome/themes/awesome-wm-nord-theme/nord.rasi -show-icons"
 
 myBrowser :: String
 myBrowser = "firefox"  -- Sets firefox as browser
@@ -319,7 +322,7 @@ myKeys =
 
     -- Run Prompt
     --  , ("M-S-<Return>", spawn "dmenu_run -i -p \"Run: \"") -- Dmenu
-        , ("M-M1-<Return>", spawn "rofi -show run")           -- Rofi
+        , ("M-d", spawn myRofi)           -- Rofi
 
     -- Useful Programs
         , ("M-<Return>", spawn (myTerminal))    -- Terminal
@@ -344,9 +347,9 @@ myKeys =
         , ("C-M1-l", incScreenSpacing 2)         -- Increase screen spacing
 
     -- Grid Select (CTR-g followed by a key)
-        , ("C-g g", spawnSelected' myAppGrid)                 -- grid select favorite apps
-        , ("C-g t", goToSelected $ mygridConfig myColorizer)  -- all open windows
-        , ("C-g b", bringSelected $ mygridConfig myColorizer) -- bring selected window to curretn workspace
+        , ("M-g g", spawnSelected' myAppGrid)                 -- grid select favorite apps
+        , ("M-g t", goToSelected $ mygridConfig myColorizer)  -- all open windows
+        , ("M-g b", bringSelected $ mygridConfig myColorizer) -- bring selected window to curretn workspace
 
     -- Windows navigation
         , ("M-m", windows W.focusMaster)  -- Move focus to the master window
@@ -391,7 +394,7 @@ main = do
     xmproc0 <- spawnPipe "xmobar ~/.config/xmobar/xmobarrc0"
     -- xmproc1 <- spawnPipe "xmobar ~/.config/xmobar/xmobarrc1"
     -- the xmonad, ya know...what the WM is named after!
-    xmonad $ ewmh . docks $ def
+    xmonad $ ewmhFullscreen . ewmh . docks $ def
         { manageHook = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks
         -- Run xmonad commands from command line with "xmonadctl command". Commands include:
         -- shrink, expand, next-layout, default-layout, restart-wm, xterm, kill, refresh, run,
