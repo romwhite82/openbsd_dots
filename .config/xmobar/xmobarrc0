@@ -22,8 +22,9 @@ Config {font = "xft:Ubuntu:weight=bold:pixelsize=11:antialias=true:hinting=true"
                     , Run Cpu ["-t", "<fn=2>\xf2db</fn>  (<total>%)","-H","50","--high","red"] 20
                       -- Ram used number and percent
                     , Run Memory ["-t", "<fn=2>\xf233</fn>  (<usedratio>%)"] 20
-                    , Run UnsafeStdinReader
+		    , Run Kbd [("us", "US"), ("ru", "RU")]
+		    , Run UnsafeStdinReader
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = " <action=`scrot`><fc=#686de1>FreeBSD</fc></action>  <fc=#666666>|</fc> %UnsafeStdinReader%}{<fc=#666666>|</fc> <fc=#ecbe7b><action=`alacritty -e htop`>%cpu%</action></fc> <fc=#666666>|</fc>  <fc=#ff6c6b><action=`alacritty -e htop`>%memory%</action></fc> <fc=#666666>|</fc> <fc=#46d9ff>%date%</fc>                         "
+       , template = " <action=`scrot`><fc=#686de1>FreeBSD</fc></action>  <fc=#666666>|</fc> %UnsafeStdinReader%}{<fc=#666666>|</fc> <fc=#ecbe7b><action=`alacritty -e htop`>%cpu%</action></fc> <fc=#666666>|</fc>  <fc=#ff6c6b><action=`alacritty -e htop`>%memory%</action></fc> <fc=#666666>|</fc> <fc=#46d9ff>%date%</fc> <fc=#666666>|</fc> <fc=#ffa500>%kbd%</fc>  "
