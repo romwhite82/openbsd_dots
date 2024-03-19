@@ -20,6 +20,7 @@ import XMonad.Actions.RotSlaves (rotSlavesDown, rotAllDown)
 import XMonad.Actions.WindowGo (runOrRaise)
 import XMonad.Actions.WithAll (sinkAll, killAll)
 import qualified XMonad.Actions.Search as S
+import XMonad.Actions.EasyMotion (selectWindow)
 
     -- Data
 import Data.Char (isSpace, toUpper)
@@ -30,6 +31,7 @@ import Data.Tree
 import qualified Data.Map as M
 
     -- Hooks
+import XMonad.ManageHook
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
 import XMonad.Hooks.EwmhDesktops  -- for some fullscreen events, also for xcomposite in obs.
 import XMonad.Hooks.ManageDocks
@@ -37,6 +39,7 @@ import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat)
 import XMonad.Hooks.ServerMode
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.WorkspaceHistory
+import XMonad.Hooks.StatusBar.PP
 
     -- Layouts
 import XMonad.Layout.Accordion
@@ -66,8 +69,11 @@ import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 import XMonad.Util.Dmenu
 import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedScratchpad
+import XMonad.Util.NamedWindows (getName)
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
+import XMonad.Prompt
+import XMonad.Prompt.Man
 
 myFont :: String
 myFont = "xft:Ubuntu:regular:size=9:antialias=true:hinting=true"
@@ -82,7 +88,7 @@ myTerminal :: String
 myTerminal = "kitty" -- Sets default terminal
 
 myRofi :: String
-myRofi = "rofi -show drun -theme ~/.config/awesome/themes/awesome-wm-nord-theme/nord.rasi -show-icons"
+myRofi = "rofi -show drun -theme ~/.xmonad/nord.rasi -show-icons"
 
 myBrowser :: String
 myBrowser = "firefox"  -- Sets firefox as browser
@@ -104,11 +110,14 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
+    spawnOnce "xrandr --rate 165"
     spawnOnce "picom &"
     spawnOnce "~/.fehbg"
 --    spawnOnce "nm-applet &"
---    spawnOnce "volumeicon &"
---    spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x282c34 --height 22 &"
+    spawnOnce "volumeicon &"
+    spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --tint 0x282c34 --alpha 0  --height 30"
+ --   spawnOnce "trayer --edge top --align left --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x282c34 --height 22 &"
+    spawnOnce "xset r rate 190 75"
 --    setWMName "LG3D"
 --    spawnOnce "conky -c $HOME/.config/conky/Enif/Enif.conf &> /dev/null &"
 --    spawnOnce "blueman-adapters &"
@@ -143,6 +152,12 @@ spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
                    , gs_originFractY = 0.5
                    , gs_font         = myFont
                    }
+
+myScratchPads :: [NamedScratchpad]
+myScratchPads = [ NS "pcmanfm" "pcmanfm" (className =? "Pcmanfm")
+      (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)) ]
+  where role = stringProperty "WM_WINDOW_ROLE"
+             
 
 myAppGrid = [ ("Telegram-desktop", "telegram-desktop")
                  , ("VScode", "code-insiders")
@@ -209,13 +224,14 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange  $ mkToggle (NBFULL ?? 
 
 
 -- myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 "]
-myWorkspaces = [" web ", " code ", " chat ", " sys ", " vid ", " office ", " cgi "]
+myWorkspaces = [" web ", " code ", " chat ", " sys ", " vid ", " office ", " cgi ", " NSP " ]
 -- myWorkspaces = [" one ", " two ", " three ", " four ", " five ", " six ", " seven "]
 
-myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
+myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] --  (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
     where i = fromJust $ M.lookup ws myWorkspaceIndices
+
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
@@ -285,7 +301,8 @@ myManageHook = composeAll
      , (className =? "Gucharmap" <&&> resource =? "Dialog")         --> doFloat 
      , (className =? "Gimp-2.10" <&&> resource =? "Dialog")         --> doFloat 
      , isFullscreen -->  doFullFloat
-     ] 
+     ]   
+  
 
 myKeys :: [(String, X ())]
 myKeys =
@@ -328,9 +345,12 @@ myKeys =
         , ("M-<Return>", spawn (myTerminal))    -- Terminal
         , ("M-b", spawn myBrowser) -- Browser
         , ("M-M1-h", spawn (myTerminal ++ " -e bpytop")) -- Htop
-        , ("M-v", spawn (myTerminal ++ " -e vis"))
+        , ("M-v", spawn (myTerminal ++ " -e nvim"))
         , ("M-e", spawn "pcmanfm")
 
+    -- Current Reading
+        , ("M-o", spawn "/home/romaha/hask.sh")
+        
      -- Workspaces
         , ("M-.", nextScreen)  -- Switch focus to next monitor
         , ("M-,", prevScreen)  -- Switch focus
@@ -383,9 +403,16 @@ myKeys =
         , ("M-u l", spawn "mocp --next")
         , ("M-u h", spawn "mocp --previous")
         , ("M-u <Space>", spawn "mocp --toggle-pause")
+
+    -- EasyMotion Keybindings
+        , ("M-z", selectWindow def >>= (`whenJust` windows . W.focusWindow))
+        , ("M-x", selectWindow def >>= (`whenJust` killWindow))
+
+        , ("<F1>", manPrompt def)
+        , ("M-S-e", namedScratchpadAction myScratchPads "pcmanfm")
         ]
          
-         where nonNSP          = WSIs (return (\ws -> W.tag ws /= "NSP"))
+ --        where nonNSP          = WSIs (return (\ws -> W.tag ws /= "NSP"))
 
 
 main :: IO ()
@@ -395,7 +422,9 @@ main = do
     -- xmproc1 <- spawnPipe "xmobar ~/.config/xmobar/xmobarrc1"
     -- the xmonad, ya know...what the WM is named after!
     xmonad $ ewmhFullscreen . ewmh . docks $ def
-        { manageHook = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks
+        { manageHook = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks   <+> namedScratchpadManageHook myScratchPads
+                     
+  
         -- Run xmonad commands from command line with "xmonadctl command". Commands include:
         -- shrink, expand, next-layout, default-layout, restart-wm, xterm, kill, refresh, run,
         -- focus-up, focus-down, swap-up, swap-down, swap-master, sink, quit-wm. You can run
@@ -403,6 +432,7 @@ main = do
         , handleEventHook    = serverModeEventHookCmd
                                <+> serverModeEventHook
                                <+> serverModeEventHookF "XMONAD_PRINT" (io . putStrLn)
+                              
                                -- <+> docksEventHook
         , modMask            = myModMask
         , terminal           = myTerminal
@@ -412,14 +442,14 @@ main = do
         , borderWidth        = myBorderWidth
         , normalBorderColor  = myNormColor
         , focusedBorderColor = myFocusColor
-        , logHook = workspaceHistoryHook <+> dynamicLogWithPP xmobarPP
+        , logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP
                         { ppOutput = \x -> hPutStrLn xmproc0 x -- ppOutput = \x -> hPutStrLn xmproc0 x                          -- xmobar on monitor 1
                         --              >> hPutStrLn xmproc1 x                          -- xmobar on monitor 2
                         , ppCurrent = xmobarColor "#c3e88d" "" . wrap "[" "]" -- Current workspace in xmobar
                         , ppVisible = xmobarColor "#c3e88d" "" .clickable               -- Visible but not current workspace
                         , ppHidden = xmobarColor "#82ABAF" "" . wrap "*" "" .clickable  -- Hidden workspaces in xmobar
                         , ppHiddenNoWindows = xmobarColor "#F07178" "" .clickable      -- Hidden workspaces (no windows)
-                        , ppTitle = xmobarColor "#d0d0d0" "" . shorten 120     -- Title of active window in xmobar
+                        , ppTitle = xmobarColor "#d0d0d0" "" . shorten 50     -- Title of active window in xmobar
                         , ppSep =  "<fc=#666666> | </fc>"                     -- Separators in xmobar
                         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
                         , ppExtras  = [windowCount]                           -- # of windows current workspace
