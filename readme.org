@@ -140,3 +140,19 @@ Silent Key 2      A 4 GotoPage 1 0
 Silent Key 3      A 4 GotoPage 0 1
 Silent Key 4      A 4 GotoPage 1 1
 #+end_src
+** Установка и настройка Xmonad + Xmobar
+В репозитории OpenBSD есть пакет Xmonad и Xmobar, но отсутствует Xmonad_contrib, поэтому целесообразно собрать всё самому через Cabal. По какой-то причине в OpenBSD не работал мой конфиг для Xmobar, с которым нет проблем в Linux и FreeBSD. Пробовал собирать с разными ключами, но беезуспешно. В результате с нуля переписал минималистичный xmobar-конфиг. Работает стабильно: отображает название workspaace-ов, название окна в фокусе, дату и раскладку клавиатуры.
+
+Общий алгоритм сборки такой:
+#+begin_src sh
+  cabal install --package-env=$HOME/.xmonad xmonad xmonad-contrib xmobar
+#+end_src
+
+После этого бинарники должны находиться в ~/.xmonad
+Соответственно, в ~/.xsession последней строчкой прописываем запуск:
+
+#+begin_src sh
+  exec  /home/romaha/.xmonad/xmonad-x86_64-openbsd 
+#+end_src
+
+
