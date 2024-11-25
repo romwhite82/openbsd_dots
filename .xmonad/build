@@ -4,7 +4,7 @@
 EXE_NAME=xmonad-config
 
 # xmonad tells us how it want resulting executable to be named
-output_file=$1; shift
+output_file=$1; 
 
 CFG_DIR="$HOME/.xmonad"
 
