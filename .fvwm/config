@@ -79,6 +79,7 @@ AddToFunc   StartFunction
 + I Test (Init) InitBackground
   Exec exec ~/.fehbg
 + I Exec exec picom -b
++ I Exec xrandr --rate 165
 + I Module FvwmButtons RightPanel
 + I Module FvwmEvent EventNewDesk
 
